@@ -11,26 +11,43 @@ import {
   Text,
   View
 } from 'react-native';
-
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+import { BleManager } from 'react-native-ble-plx';
 
 export default class App extends Component<{}> {
+  constructor() {
+    super();
+    this.manager = new BleManager();
+    this.state = { deviceName: 'UNKNOWN' };
+  }
+
+  componentWillMount() {
+    const subscription = this.manager.onStateChange((state) => {
+      console.warn('state: ' + state);
+      if (state === 'PoweredOn') {
+        this.scanAndConnect();
+        subscription.remove();
+      }
+    }, true);
+  }
+
+  scanAndConnect() {
+    this.manager.startDeviceScan(null, null, (error, device) => {
+      if (error) {
+        return;
+      }
+
+      this.setState({ deviceName: device.name + ' ' + device.id });
+    });
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
           Welcome to Bluno!!!
         </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
+        <Text style={styles.device}>
+          {this.state.deviceName}
         </Text>
       </View>
     );
@@ -49,7 +66,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
   },
-  instructions: {
+  device: {
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
