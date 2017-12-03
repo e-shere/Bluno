@@ -42,9 +42,11 @@ export default class App extends Component<{}> {
           return;
         }
 
-        this.setState({ devices: this.state.devices.concat([
-          { name: device.name, key: device.id }
-        ]) });
+        var devices = this.state.devices;
+        if (devices.filter(item => item.key == device.id).length == 0) {
+          devices = devices.concat([{ name: device.name, key: device.id }]);
+          this.setState({ devices: devices });
+        }
       });
     }
   }
