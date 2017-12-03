@@ -9,7 +9,8 @@ import {
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
+  FlatList
 } from 'react-native';
 import { BleManager } from 'react-native-ble-plx';
 
@@ -22,7 +23,6 @@ export default class App extends Component<{}> {
 
   componentWillMount() {
     const subscription = this.manager.onStateChange((state) => {
-      console.warn('state: ' + state);
       if (state === 'PoweredOn') {
         this.scanAndConnect();
         subscription.remove();
@@ -36,7 +36,9 @@ export default class App extends Component<{}> {
         return;
       }
 
-      this.setState({ devices: this.state.devices.concat([device.name + ' ' + device.id]) });
+      this.setState({ devices: this.state.devices.concat([
+        { name: device.name, key: device.id }
+      ]) });
     });
   }
 
@@ -46,9 +48,10 @@ export default class App extends Component<{}> {
         <Text style={styles.welcome}>
           Welcome to Bluno!!!
         </Text>
-        <Text style={styles.device}>
-          {this.state.devices.toString()}
-        </Text>
+        <FlatList style={styles.list}
+          data = { this.state.devices }
+          renderItem={({item}) => <Text style={styles.item}>{item.name} {item.key}</Text>}
+        />
       </View>
     );
   }
@@ -64,9 +67,11 @@ const styles = StyleSheet.create({
   welcome: {
     fontSize: 20,
     textAlign: 'center',
-    margin: 10,
+    margin: 100,
   },
-  device: {
+  list: {
+  },
+  item: {
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
