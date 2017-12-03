@@ -17,7 +17,7 @@ export default class App extends Component<{}> {
   constructor() {
     super();
     this.manager = new BleManager();
-    this.state = { deviceName: 'UNKNOWN' };
+    this.state = { devices: [] };
   }
 
   componentWillMount() {
@@ -36,7 +36,7 @@ export default class App extends Component<{}> {
         return;
       }
 
-      this.setState({ deviceName: device.name + ' ' + device.id });
+      this.setState({ devices: this.state.devices.concat([device.name + ' ' + device.id]) });
     });
   }
 
@@ -47,7 +47,7 @@ export default class App extends Component<{}> {
           Welcome to Bluno!!!
         </Text>
         <Text style={styles.device}>
-          {this.state.deviceName}
+          {this.state.devices.toString()}
         </Text>
       </View>
     );
