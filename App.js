@@ -33,6 +33,7 @@ export default class App extends Component<{}> {
   }
 
   scanDevices() {
+    this.manager.stopDeviceScan();
     this.setState({ devices: [] });
 
     if (this.state.enabled) {
