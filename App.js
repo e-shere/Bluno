@@ -65,6 +65,7 @@ export default class App extends Component<{}> {
             })
             .then((characteristic) => {
               console.warn(characteristic.value);
+              return this.manager.cancelDeviceConnection(device.id);
             })
         }
       });
