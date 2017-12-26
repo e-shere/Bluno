@@ -32,6 +32,20 @@ export default class App extends Component<{}> {
     }, true);
   }
 
+  async writeRead(device_id) {
+    serviceUUID = '0000dfb0-0000-1000-8000-00805f9b34fb';
+    characteristicUUID = '0000dfb1-0000-1000-8000-00805f9b34fb';
+
+    await this.manager.connectToDevice(device_id);
+    await this.manager.discoverAllServicesAndCharacteristicsForDevice(device_id);
+    await this.manager.writeCharacteristicWithoutResponseForDevice(
+      device_id, serviceUUID, characteristicUUID, 'QQ==');
+    var characteristic = await this.manager.readCharacteristicForDevice(
+      device_id, serviceUUID, characteristicUUID);
+    console.warn(characteristic.value);
+    await this.manager.cancelDeviceConnection(device_id);
+  }
+
   scanDevices() {
     this.manager.stopDeviceScan();
     this.setState({ devices: [] });
@@ -47,26 +61,7 @@ export default class App extends Component<{}> {
         if (devices.filter(item => item.key == device.id).length == 0) {
           devices = devices.concat([{ name: device.name, key: device.id }]);
           this.setState({ devices: devices });
-
-          serviceUUID = '0000dfb0-0000-1000-8000-00805f9b34fb';
-          characteristicUUID = '0000dfb1-0000-1000-8000-00805f9b34fb';
-
-          this.manager.connectToDevice(device.id)
-            .then((device) => {
-              return this.manager.discoverAllServicesAndCharacteristicsForDevice(device.id);
-            })
-            .then((device) => {
-              return this.manager.writeCharacteristicWithoutResponseForDevice(
-                device.id, serviceUUID, characteristicUUID, 'QQ==');
-            })
-            .then((characteristic) => {
-              return this.manager.readCharacteristicForDevice(
-                device.id, serviceUUID, characteristicUUID);
-            })
-            .then((characteristic) => {
-              console.warn(characteristic.value);
-              return this.manager.cancelDeviceConnection(device.id);
-            })
+          this.writeRead(device.id);
         }
       });
     }
