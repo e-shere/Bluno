@@ -11,6 +11,7 @@ void setup() {
   // initialize the pushbutton pin as an input:
   pinMode(buttonPin, INPUT);
   Serial.begin(9600);  //init the Serial
+  //Serial.begin(115200);  // correct speed for standalone mode
 }
 
 void loop() {
