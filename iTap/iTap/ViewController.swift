@@ -26,6 +26,30 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     // Dispose of any resources that can be recreated.
   }
 
+  @IBAction func connect(_ sender: UIButton) {
+    var inputStream: InputStream!
+    var outputStream: OutputStream!
+
+    var readStream: Unmanaged<CFReadStream>?
+    var writeStream: Unmanaged<CFWriteStream>?
+
+    CFStreamCreatePairWithSocketToHost(kCFAllocatorDefault,
+      "ec2-34-244-91-108.eu-west-1.compute.amazonaws.com" as CFString,
+      8888, &readStream, &writeStream)
+
+    inputStream = readStream!.takeRetainedValue()
+    outputStream = writeStream!.takeRetainedValue()
+
+    inputStream.schedule(in: .current, forMode: .commonModes)
+    outputStream.schedule(in: .current, forMode: .commonModes)
+
+    inputStream.open()
+    outputStream.open()
+
+    let data = "hello".data(using: .ascii)!
+    _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
+  }
+
   @IBAction func buzz(_ sender: UIButton) {
     textView.insertText("sending...\n")
     let bytes = "X".data(using: .utf8)
