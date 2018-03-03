@@ -2,7 +2,7 @@ from time import sleep
 import socket
 
 serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serversocket.bind(("192.168.0.7", 8081))
+serversocket.bind(("", 8888))
 serversocket.listen(2)
 
 while True:
