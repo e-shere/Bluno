@@ -9,7 +9,7 @@
 import UIKit
 import CoreBluetooth
 
-class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate {
+class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, StreamDelegate {
   @IBOutlet weak var textView: UITextView!
 
   var centralManager:CBCentralManager!
@@ -40,6 +40,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     inputStream = readStream!.takeRetainedValue()
     outputStream = writeStream!.takeRetainedValue()
 
+    // receive notifications when data is received
+    inputStream.delegate = self
+
     inputStream.schedule(in: .current, forMode: .commonModes)
     outputStream.schedule(in: .current, forMode: .commonModes)
 
@@ -48,6 +51,31 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
 
     let data = "hello".data(using: .ascii)!
     _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
+  }
+
+  func stream(_ stream: Stream, handle eventCode: Stream.Event) {
+    switch eventCode {
+    case .hasBytesAvailable:
+      print("hasBytesAvailable")
+      let inputStream = stream as! InputStream
+      while inputStream.hasBytesAvailable {
+        let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 1024)
+        let numberOfBytesRead = inputStream.read(buffer, maxLength: 1024)
+        if numberOfBytesRead < 0 {
+          if let _ = stream.streamError { break }
+        }
+        let str = String(bytesNoCopy: buffer, length: numberOfBytesRead,
+          encoding: .utf8, freeWhenDone: true)
+        print("received: ", str!)
+        textView.insertText(str! + "\n")
+      }
+    case .endEncountered:
+      print("endEncountered")
+    case .errorOccurred:
+      print("errorOccurred")
+    default:
+      print("")
+    }
   }
 
   @IBAction func buzz(_ sender: UIButton) {
