@@ -27,7 +27,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
   }
 
   @IBAction func buzz(_ sender: UIButton) {
-    textView.insertText("hello\n")
+    textView.insertText("sending...\n")
+    let bytes = "X".data(using: .utf8)
+    sensorTag?.writeValue(bytes!, for: readCharacteristic!, type: .withResponse)
   }
 
   // notification from Bluetooth controller when it's on/off
