@@ -102,6 +102,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     if let dataBytes = characteristic.value {
       let str = String(data: dataBytes, encoding: .utf8)
       print(str!)
+      textView.insertText(str!)
     }
   }
 
