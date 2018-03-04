@@ -76,8 +76,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
       }
     case .endEncountered:
       print("endEncountered")
+      textView.insertText("connection endEncountered\n")
     case .errorOccurred:
-      print("errorOccurred")
+      print("errorOccurred", stream.streamError!)
+      textView.insertText("connection errorOccurred\n")
     default:
       print("")
     }
