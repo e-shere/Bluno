@@ -28,8 +28,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     var writeStream: Unmanaged<CFWriteStream>?
 
     CFStreamCreatePairWithSocketToHost(kCFAllocatorDefault,
-      "192.168.0.7" as CFString,
-      8081, &readStream, &writeStream)
+      "34.245.192.39" as CFString,
+      8888, &readStream, &writeStream)
 
     inputStream = readStream!.takeRetainedValue()
     outputStream = writeStream!.takeRetainedValue()
