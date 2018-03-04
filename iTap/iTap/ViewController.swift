@@ -69,6 +69,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
           encoding: .utf8, freeWhenDone: true)
         print("received: ", str!)
         textView.insertText(str! + "\n")
+
+        // notify Bluno
+        let bytes = "X".data(using: .utf8)
+        sensorTag?.writeValue(bytes!, for: readCharacteristic!, type: .withResponse)
       }
     case .endEncountered:
       print("endEncountered")
