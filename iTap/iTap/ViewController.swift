@@ -22,7 +22,14 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
   override func viewDidLoad() {
     super.viewDidLoad()
     centralManager = CBCentralManager(delegate: self, queue: nil)
+  }
 
+  override func didReceiveMemoryWarning() {
+    super.didReceiveMemoryWarning()
+    // Dispose of any resources that can be recreated.
+  }
+
+  @IBAction func connectServer(_ sender: UIButton) {
     // connect to server
     var readStream: Unmanaged<CFReadStream>?
     var writeStream: Unmanaged<CFWriteStream>?
@@ -42,11 +49,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
 
     inputStream.open()
     outputStream.open()
-  }
-
-  override func didReceiveMemoryWarning() {
-    super.didReceiveMemoryWarning()
-    // Dispose of any resources that can be recreated.
   }
 
   @IBAction func tapFriend(_ sender: UIButton) {
