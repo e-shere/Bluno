@@ -11,7 +11,6 @@ def handle_client(client_reader, client_writer):
     client_writer.write("Hello\n".encode())
     while True:
         line = yield from client_reader.readline()
-        print(clients)
         if line.decode() == "":
             print("client left")
             break
@@ -19,6 +18,8 @@ def handle_client(client_reader, client_writer):
         to_send= "You sent: " + line.decode()
         for client in clients:
             writer = clients[client][1]
+            if writer == client_writer:
+                continue
             writer.write(to_send.encode())
             yield from writer.drain()
     
