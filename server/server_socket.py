@@ -11,13 +11,16 @@ def handle_client(client_reader, client_writer):
     client_writer.write("Hello\n".encode())
     while True:
         line = yield from client_reader.readline()
+        print(clients)
         if line.decode() == "":
             print("client left")
             break
         print("Received: ", line.decode())
         to_send= "You sent: " + line.decode()
-        client_writer.write(to_send.encode())
-        yield from client_writer.drain()
+        for client in clients:
+            writer = clients[client][1]
+            writer.write(to_send.encode())
+            yield from writer.drain()
     
 
 loop = asyncio.get_event_loop()
