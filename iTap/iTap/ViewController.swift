@@ -75,6 +75,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     }
     let data = (text + "\n").data(using: .ascii)!
     _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
+    log.insertText("You sent: " + text + "\n")
   }
 
   // notification when message from server received
@@ -90,11 +91,14 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
         let str = String(bytesNoCopy: buffer, length: numberOfBytesRead,
           encoding: .utf8, freeWhenDone: true)
-        log.insertText("They sent: " + str! + "\n")
-
-        // notify Bluno
-        let bytes = "X".data(using: .utf8)
-        sensorTag?.writeValue(bytes!, for: readCharacteristic!, type: .withResponse)
+        if str != "HELLO\n" {
+          log.insertText("They sent: " + str!)
+          // notify Bluno
+          let bytes = "X".data(using: .utf8)
+          sensorTag?.writeValue(bytes!, for: readCharacteristic!, type: .withResponse)
+        } else {
+          log.insertText("Connected to server\n")
+        }
       }
     case .endEncountered:
       log.insertText("connection endEncountered\n")

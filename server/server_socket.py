@@ -8,13 +8,13 @@ def accept_client(client_reader, client_writer):
 @asyncio.coroutine
 def handle_client(client_reader, client_writer):
     print("Client connected")
-    client_writer.write("Connected to server\n".encode())
+    client_writer.write("HELLO\n".encode())
     while True:
         line = yield from client_reader.readline()
         if line.decode() == "":
             print("Client left")
             break
-        print("Received: ", line.decode())
+        print("Received: ", line.decode().rstrip())
         for client in clients:
             writer = clients[client][1]
             if writer == client_writer:
