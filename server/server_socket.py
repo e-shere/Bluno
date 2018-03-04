@@ -7,15 +7,16 @@ serversocket.bind(("", 8888))
 serversocket.listen(2)
 print("I am running")
 
+connection, address = serversocket.accept()
+print("Something connected")
+
 while True:
-    connection, address = serversocket.accept()
-    print("Something connected")
     data = connection.recv(1024)
     if len(data) > 0:
         print("Received: " + data.decode())
         connection.send(data)
-    connection.close()
 
+connection.close()
 serversocket.close()
 
 sleep(0.05)
