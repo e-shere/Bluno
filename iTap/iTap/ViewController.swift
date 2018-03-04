@@ -10,7 +10,7 @@ import UIKit
 import CoreBluetooth
 
 class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, StreamDelegate {
-  @IBOutlet weak var textView: UITextView!
+  @IBOutlet weak var log: UITextView!
 
   var centralManager:CBCentralManager!
   var sensorTag:CBPeripheral?
@@ -49,7 +49,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     // Dispose of any resources that can be recreated.
   }
 
-  @IBAction func connect(_ sender: UIButton) {
+  @IBAction func tapFriend(_ sender: UIButton) {
     let data = "phone\n".data(using: .ascii)!
     _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
   }
@@ -68,7 +68,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         let str = String(bytesNoCopy: buffer, length: numberOfBytesRead,
           encoding: .utf8, freeWhenDone: true)
         print("received: ", str!)
-        textView.insertText(str! + "\n")
+        log.insertText(str! + "\n")
 
         // notify Bluno
         let bytes = "X".data(using: .utf8)
@@ -76,17 +76,17 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
       }
     case .endEncountered:
       print("endEncountered")
-      textView.insertText("connection endEncountered\n")
+      log.insertText("connection endEncountered\n")
     case .errorOccurred:
       print("errorOccurred", stream.streamError!)
-      textView.insertText("connection errorOccurred\n")
+      log.insertText("connection errorOccurred\n")
     default:
       print("")
     }
   }
 
-  @IBAction func buzz(_ sender: UIButton) {
-    textView.insertText("sending...\n")
+  @IBAction func tapSelf(_ sender: UIButton) {
+    log.insertText("sending...\n")
     let bytes = "X".data(using: .utf8)
     sensorTag?.writeValue(bytes!, for: readCharacteristic!, type: .withResponse)
   }
@@ -163,7 +163,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     if let dataBytes = characteristic.value {
       let str = String(data: dataBytes, encoding: .utf8)
       print(str!)
-      textView.insertText(str!)
+      log.insertText(str!)
 
       // send message to server
       let data = "button\n".data(using: .ascii)!
