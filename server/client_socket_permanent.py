@@ -16,10 +16,15 @@ def std_input(loop):
     return reader
 
 @asyncio.coroutine
-def receiver(reader):
+def receiver(reader, loop):
     while True:
         response = yield from reader.readline()
-        print(response.decode())
+        s = response.decode()
+        if s == "":
+            print("server disconnected")
+            loop.stop()
+            break
+        print(s)
         
 
 @asyncio.coroutine
@@ -34,7 +39,7 @@ def transmitter(writer,user_input):
 loop = asyncio.get_event_loop()
 reader,writer  = loop.run_until_complete(connect(loop))
 user_input = loop.run_until_complete(std_input(loop))
-tasks = [loop.create_task(receiver(reader)), loop.create_task(transmitter(writer,user_input))]
+tasks = [loop.create_task(receiver(reader, loop)), loop.create_task(transmitter(writer,user_input))]
 loop.run_until_complete(asyncio.wait(tasks))
 loop.close()
 
