@@ -18,15 +18,25 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
 
   var inputStream: InputStream!
   var outputStream: OutputStream!
+  var blunoName: String!
 
   override func viewDidLoad() {
     super.viewDidLoad()
-    centralManager = CBCentralManager(delegate: self, queue: nil)
   }
 
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
+  }
+
+  @IBAction func connectBluno1(_ sender: UIButton) {
+    blunoName="Bluno1"
+    centralManager = CBCentralManager(delegate: self, queue: nil)
+  }
+
+  @IBAction func connectBluno2(_ sender: UIButton) {
+    blunoName="Bluno2"
+    centralManager = CBCentralManager(delegate: self, queue: nil)
   }
 
   @IBAction func connectServer(_ sender: UIButton) {
@@ -49,6 +59,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
 
     inputStream.open()
     outputStream.open()
+
+    log.insertText("Connecting to server\n")
   }
 
   @IBAction func tapFriend(_ sender: UIButton) {
@@ -115,8 +127,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
   // notification when device is discovered
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
     if let peripheralName = advertisementData[CBAdvertisementDataLocalNameKey] as? String {
-      if peripheralName == "Bluno1"
+      if peripheralName == blunoName
       {
+        log.insertText("Connected to " + blunoName + "\n")
         sensorTag = peripheral
         sensorTag!.delegate = self
         centralManager.connect(sensorTag!, options: nil)
