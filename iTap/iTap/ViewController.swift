@@ -162,6 +162,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
       let str = String(data: dataBytes, encoding: .utf8)
       print(str!)
       textView.insertText(str!)
+
+      // send message to server
+      let data = "button\n".data(using: .ascii)!
+      _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
     }
   }
 
