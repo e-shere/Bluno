@@ -11,6 +11,7 @@ import CoreBluetooth
 
 class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, StreamDelegate {
   @IBOutlet weak var log: UITextView!
+  @IBOutlet weak var message: UITextField!
 
   var centralManager:CBCentralManager!
   var sensorTag:CBPeripheral?
@@ -27,6 +28,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
+  }
+
+  override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+      self.view.endEditing(true)
   }
 
   @IBAction func connectBluno1(_ sender: UIButton) {
@@ -64,7 +69,11 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
   }
 
   @IBAction func tapFriend(_ sender: UIButton) {
-    let data = "phone\n".data(using: .ascii)!
+    var text = message.text!
+    if text == "" {
+      text = "Buzz"
+    }
+    let data = (text + "\n").data(using: .ascii)!
     _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
   }
 
@@ -81,7 +90,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
         let str = String(bytesNoCopy: buffer, length: numberOfBytesRead,
           encoding: .utf8, freeWhenDone: true)
-        log.insertText(str! + "\n")
+        log.insertText("They sent: " + str! + "\n")
 
         // notify Bluno
         let bytes = "X".data(using: .utf8)
