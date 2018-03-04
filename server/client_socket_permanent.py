@@ -3,7 +3,7 @@ import sys
 
 @asyncio.coroutine
 def connect(loop):
-    reader,writer = yield from asyncio.open_connection('34.245.192.39', 8888)
+    reader,writer = yield from asyncio.open_connection('192.168.0.7', 8081)
     print("connected :)")
     return reader,writer
 

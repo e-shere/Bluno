@@ -16,26 +16,20 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
   var sensorTag:CBPeripheral?
   var readCharacteristic:CBCharacteristic?
 
+  var inputStream: InputStream!
+  var outputStream: OutputStream!
+
   override func viewDidLoad() {
     super.viewDidLoad()
     centralManager = CBCentralManager(delegate: self, queue: nil)
-  }
 
-  override func didReceiveMemoryWarning() {
-    super.didReceiveMemoryWarning()
-    // Dispose of any resources that can be recreated.
-  }
-
-  @IBAction func connect(_ sender: UIButton) {
-    var inputStream: InputStream!
-    var outputStream: OutputStream!
-
+    // connect to server
     var readStream: Unmanaged<CFReadStream>?
     var writeStream: Unmanaged<CFWriteStream>?
 
     CFStreamCreatePairWithSocketToHost(kCFAllocatorDefault,
-      "ec2-34-244-91-108.eu-west-1.compute.amazonaws.com" as CFString,
-      8888, &readStream, &writeStream)
+      "192.168.0.7" as CFString,
+      8081, &readStream, &writeStream)
 
     inputStream = readStream!.takeRetainedValue()
     outputStream = writeStream!.takeRetainedValue()
@@ -48,8 +42,15 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
 
     inputStream.open()
     outputStream.open()
+  }
 
-    let data = "hello".data(using: .ascii)!
+  override func didReceiveMemoryWarning() {
+    super.didReceiveMemoryWarning()
+    // Dispose of any resources that can be recreated.
+  }
+
+  @IBAction func connect(_ sender: UIButton) {
+    let data = "phone\n".data(using: .ascii)!
     _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
   }
 
