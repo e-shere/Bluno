@@ -111,7 +111,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
   // notification when device is discovered
   func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
     if let peripheralName = advertisementData[CBAdvertisementDataLocalNameKey] as? String {
-      if peripheralName == "Bluno"
+      if peripheralName == "Bluno1"
       {
         sensorTag = peripheral
         sensorTag!.delegate = self
