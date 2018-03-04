@@ -68,10 +68,10 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
   }
 
+  // notification when message from server received
   func stream(_ stream: Stream, handle eventCode: Stream.Event) {
     switch eventCode {
     case .hasBytesAvailable:
-      print("hasBytesAvailable")
       let inputStream = stream as! InputStream
       while inputStream.hasBytesAvailable {
         let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 1024)
@@ -81,7 +81,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         }
         let str = String(bytesNoCopy: buffer, length: numberOfBytesRead,
           encoding: .utf8, freeWhenDone: true)
-        print("received: ", str!)
         log.insertText(str! + "\n")
 
         // notify Bluno
@@ -89,10 +88,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
         sensorTag?.writeValue(bytes!, for: readCharacteristic!, type: .withResponse)
       }
     case .endEncountered:
-      print("endEncountered")
       log.insertText("connection endEncountered\n")
     case .errorOccurred:
-      print("errorOccurred", stream.streamError!)
       log.insertText("connection errorOccurred\n")
     default:
       print("")
@@ -100,7 +97,7 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
   }
 
   @IBAction func tapSelf(_ sender: UIButton) {
-    log.insertText("sending...\n")
+    log.insertText("Tapped self\n")
     let bytes = "X".data(using: .utf8)
     sensorTag?.writeValue(bytes!, for: readCharacteristic!, type: .withResponse)
   }
@@ -117,9 +114,9 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     case .unauthorized:
       print("unauthorized")
     case .poweredOff:
-      print("poweredOff")
+      log.insertText("Bluetooth is switched off\n")
     case .poweredOn:
-      print("poweredOn")
+      log.insertText("Bluetooth is switched on\n")
       centralManager.scanForPeripherals(withServices: nil, options: nil)
     }
   }
@@ -152,7 +149,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     if let services = peripheral.services {
       for service in services {
         // DFB0
-        print("service ", service.uuid)
         peripheral.discoverCharacteristics(nil, for: service)
       }
     }
@@ -163,7 +159,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     if let characteristics = service.characteristics {
       for characteristic in characteristics {
         // DFB1 and DFB2
-        print("characteristic ", characteristic.uuid)
         if characteristic.uuid.uuidString == "DFB1" {
           readCharacteristic = characteristic
           // enable notifications from characteristic
@@ -177,7 +172,6 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
   func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
     if let dataBytes = characteristic.value {
       let str = String(data: dataBytes, encoding: .utf8)
-      print(str!)
       log.insertText(str!)
 
       // send message to server
