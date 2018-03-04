@@ -18,7 +18,7 @@ def std_input(loop):
 @asyncio.coroutine
 def receiver(reader):
     while True:
-        response = yield from reader.read(1)
+        response = yield from reader.readline()
         print(response.decode())
         
 

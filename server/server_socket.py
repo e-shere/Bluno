@@ -1,22 +1,25 @@
-from time import sleep
-import socket
+import asyncio
 
-serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-serversocket.bind(("", 8888))
-serversocket.listen(2)
+clients = {}
+
+def accept_client(client_reader, client_writer):
+    ("There is a client!")
+    task = asyncio.Task(handle_client(client_reader, client_writer))
+    clients[task] = (client_reader, client_writer)
+
+def handle_client(client_reader, client_writer):
+    client_writer.write("Hello\n".encode())
+    while True:
+        line = yield from client_reader.readline()
+        print("Received: ", line.decode())
+        client_writer.write(line)
+        yield from client_writed.drain()
+    
+
+loop = asyncio.get_event_loop()
+f = asyncio.start_server(accept_client, host=None, port=8081)
 print("I am running")
+loop.run_until_complete(f)
+loop.run_forever()
 
-connection, address = serversocket.accept()
-print("Something connected")
 
-while True:
-    data = connection.recv(1024)
-    if len(data) > 0:
-        print("Received: " + data.decode())
-        connection.send(data)
-
-connection.close()
-serversocket.close()
-
-sleep(0.05)
