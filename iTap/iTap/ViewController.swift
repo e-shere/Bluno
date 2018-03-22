@@ -73,9 +73,17 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
     if text == "" {
       text = "Buzz"
     }
-    let data = (text + "\n").data(using: .ascii)!
-    _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
-    log.insertText("You sent: " + text + "\n")
+
+    if (outputStream != nil)
+    {
+      let data = (text + "\n").data(using: .ascii)!
+      _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
+      log.insertText("You sent: " + text + "\n")
+    }
+    else
+    {
+      log.insertText("Not connected to server\n")
+    }
   }
 
   // notification when message from server received
@@ -111,8 +119,15 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
 
   @IBAction func tapSelf(_ sender: UIButton) {
     log.insertText("Tapped self\n")
-    let bytes = "X".data(using: .utf8)
-    sensorTag?.writeValue(bytes!, for: readCharacteristic!, type: .withResponse)
+    if (readCharacteristic != nil)
+    {
+      let bytes = "X".data(using: .utf8)
+      sensorTag?.writeValue(bytes!, for: readCharacteristic!, type: .withResponse)
+    }
+    else
+    {
+      log.insertText("No characteristic\n")
+    }
   }
 
   // notification from Bluetooth controller when it's on/off
@@ -176,6 +191,8 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
           readCharacteristic = characteristic
           // enable notifications from characteristic
           sensorTag?.setNotifyValue(true, for: characteristic)
+
+          log.insertText("Discovered characteristics\n")
         }
       }
     }
@@ -185,11 +202,20 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
   func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
     if let dataBytes = characteristic.value {
       let str = String(data: dataBytes, encoding: .utf8)
-      log.insertText(str!)
+      print(str!)
 
       // send message to server
-      let data = "button\n".data(using: .ascii)!
-      _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
+      if (outputStream != nil)
+      {
+        let text = "Buzz";
+        let data = (text + "\n").data(using: .ascii)!
+        _ = data.withUnsafeBytes { outputStream.write($0, maxLength: data.count) }
+        log.insertText("You sent: " + text + "\n")
+      }
+      else
+      {
+        log.insertText("Not connected to server\n")
+      }
     }
   }
 
