@@ -12,6 +12,7 @@ import CoreBluetooth
 class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDelegate, StreamDelegate {
   @IBOutlet weak var log: UITextView!
   @IBOutlet weak var message: UITextField!
+  @IBOutlet weak var serverAddress: UITextField!
 
   var centralManager:CBCentralManager!
   var sensorTag:CBPeripheral?
@@ -45,12 +46,14 @@ class ViewController: UIViewController, CBCentralManagerDelegate, CBPeripheralDe
   }
 
   @IBAction func connectServer(_ sender: UIButton) {
+    let address = serverAddress.text!;
+
     // connect to server
     var readStream: Unmanaged<CFReadStream>?
     var writeStream: Unmanaged<CFWriteStream>?
 
     CFStreamCreatePairWithSocketToHost(kCFAllocatorDefault,
-      "34.245.192.39" as CFString,
+      address as CFString,
       8888, &readStream, &writeStream)
 
     inputStream = readStream!.takeRetainedValue()
