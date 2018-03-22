@@ -94,7 +94,7 @@
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" red="0.38062990458497437" green="0.865887839905507" blue="1" alpha="0.26435959507042256" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.7007930323805418" green="0.96636670827865601" blue="0.95009669158708976" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
