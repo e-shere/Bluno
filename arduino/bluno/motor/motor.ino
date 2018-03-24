@@ -4,17 +4,15 @@ const int buttonPin = 2;
 
 int buttonState = 0;
 void setup() {
-  // put your setup code here, to run once:
-pinMode(buttonPin,INPUT);
-pinMode(motorPin,OUTPUT);
+pinMode(buttonPin,INPUT); //read from the button pin
+pinMode(motorPin,OUTPUT); //write to the motor pin
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
   buttonState = digitalRead(buttonPin);
-  if (buttonState == HIGH) {
-    analogWrite(motorPin,153);
+  if (buttonState == HIGH) {    //if the button is pressed
+    analogWrite(motorPin,153);  //vibrate the motor
   } else {
-    analogWrite(motorPin,0);
+    analogWrite(motorPin,0);    //otherwise switch the motor off
   }
 }
